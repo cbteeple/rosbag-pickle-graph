@@ -5,6 +5,7 @@ import os
 import time
 import pickle
 import matplotlib.pyplot as plt
+import numpy as np
 
 save_data_folder = os.getcwd()
 
@@ -46,6 +47,7 @@ class Grapher:
             print(file)
             self.new_plot()
             self.get_data(file)
+            self.get_stats()
             self.plot_current()
             self.plot_finish(file)
 
@@ -113,6 +115,23 @@ class Grapher:
         plt.savefig(os.path.join(self.filepath,in_file.replace('.pkl','.png')))
         plt.savefig(os.path.join(self.filepath,in_file.replace('.pkl','.svg')))
         plt.show()
+        
+        
+    def get_stats(self):
+        N = len(self.y_fields)
+        for idx, y_field in enumerate(self.y_fields):
+            data = self.curr_data[idx]['data']
+            
+            self.curr_data[idx]['mean'] = np.mean(data, axis=0).tolist()
+            self.curr_data[idx]['std'] = np.std(data, axis=0).tolist()
+            
+            print(' ')
+            print(y_field['field'])
+            print('Mean:')
+            print(self.curr_data[idx]['mean'])
+            print('StDev:')
+            print(self.curr_data[idx]['std'])
+            
 
 
 
