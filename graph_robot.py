@@ -4,10 +4,9 @@ import sys
 import os
 import time
 import pickle
-import rosbag
 import matplotlib.pyplot as plt
 
-save_data_folder = 'Documents/data'
+save_data_folder = os.getcwd()
 
 torque_order=["",]
 
