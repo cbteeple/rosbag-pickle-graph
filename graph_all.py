@@ -90,6 +90,13 @@ class Grapher:
 
             self.curr_data[i] = out
 
+        success_topic = curr_data_raw.get('trial_success', None)
+        
+        if success_topic is not None:
+            self.success = find_el( 'success', success_topic[0]['msg'])
+        else:
+            self.success = None
+
 
         #print(self.curr_data[0])
         
@@ -100,15 +107,27 @@ class Grapher:
     def new_plot(self):
         self.fig = plt.figure(self.plt_idx)
         self.plt_idx+=1
+
+
         
 
     def plot_current(self):
+        
         N = len(self.y_fields)
         for idx, y_field in enumerate(self.y_fields):
             plt.subplot(N, 1, idx+1)
             plt.plot(self.curr_data[idx]['timestamp'], self.curr_data[idx]['data'], linewidth=0.575)
             plt.xlabel(self.x_field)
             plt.ylabel(y_field['field'])
+
+            if idx==0:
+                if self.success is not None:
+                    if self.success:
+                        plt.title('Trial Marked: SUCCESS')
+                    else:
+                        plt.title('Trial Marked: FAILED')
+
+        
 
 
 

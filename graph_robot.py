@@ -4,10 +4,10 @@ import sys
 import os
 import time
 import pickle
+import rosbag
 import matplotlib.pyplot as plt
-import numpy as np
 
-save_data_folder = os.getcwd()
+save_data_folder = 'Documents/data'
 
 torque_order=["",]
 
@@ -47,7 +47,6 @@ class Grapher:
             print(file)
             self.new_plot()
             self.get_data(file)
-            self.get_stats()
             self.plot_current()
             self.plot_finish(file)
 
@@ -89,9 +88,12 @@ class Grapher:
             self.curr_data[i] = out
 
 
-        #print(self.curr_data[0])
+        success_topic = curr_data_raw.get('trial_success', None)
         
-        #print(self.curr_data[ self.y_fields[1]['topic'] ][0]['msg'][self.y_fields[1]['field']])
+        if success_topic is not None:
+            self.success = find_el( 'success', success_topic[0]['msg'])
+        else:
+            self.success = None
 
 
 
@@ -108,6 +110,13 @@ class Grapher:
             plt.xlabel(self.x_field)
             plt.ylabel(y_field['field'])
 
+            if idx==0:
+                if self.success is not None:
+                    if self.success:
+                        plt.title('Trial Marked: SUCCESS')
+                    else:
+                        plt.title('Trial Marked: FAILED')
+
 
 
     def plot_finish(self,in_file=None):
@@ -115,23 +124,6 @@ class Grapher:
         plt.savefig(os.path.join(self.filepath,in_file.replace('.pkl','.png')))
         plt.savefig(os.path.join(self.filepath,in_file.replace('.pkl','.svg')))
         plt.show()
-        
-        
-    def get_stats(self):
-        N = len(self.y_fields)
-        for idx, y_field in enumerate(self.y_fields):
-            data = self.curr_data[idx]['data']
-            
-            self.curr_data[idx]['mean'] = np.mean(data, axis=0).tolist()
-            self.curr_data[idx]['std'] = np.std(data, axis=0).tolist()
-            
-            print(' ')
-            print(y_field['field'])
-            print('Mean:')
-            print(self.curr_data[idx]['mean'])
-            print('StDev:')
-            print(self.curr_data[idx]['std'])
-            
 
 
 
