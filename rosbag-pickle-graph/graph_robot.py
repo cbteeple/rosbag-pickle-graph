@@ -4,7 +4,6 @@ import sys
 import os
 import time
 import pickle
-import rosbag
 import matplotlib.pyplot as plt
 
 save_data_folder = 'Documents/data'
@@ -20,7 +19,7 @@ def find_el(element, json):
     return rv
 
 
-class Grapher:
+class RoboGrapher:
     def __init__(self):
         self.save_data_folder = save_data_folder
         self.plt_idx=0
