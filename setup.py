@@ -11,6 +11,4 @@ setup(
     url='https://github.com/cbteeple/rosbag-pickle-graph',
     author='Clark Teeple',
     author_email='cbteeple@gmail.com',
-    test_suite='nose.collector',
-    tests_require=['nose'],
 )
