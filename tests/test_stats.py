@@ -4,9 +4,13 @@ source_base_dir = 'data'
 dest_dir        = 'data_plot'
 
 data_set = "test"
-plot_raw_data = False
+
+plot_raw_data = True
+save_raw_graphs = True
+
 plot_means    = True
 save_mean_graphs = True
+
 force_new_summary = False
 
 grasp_types = ["top_grasp","plop_grasp","swoosh_grasp"]

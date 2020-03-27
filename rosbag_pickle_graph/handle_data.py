@@ -7,15 +7,11 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 
 
-data_source_folder = 'Documents/data'
-
-
 
 # Get all of your data
 class DataHandler:
     def __init__(self):
-        self.data_source_folder = data_source_folder
-        self.plt_idx=0
+        self.data_source_folder = ''
         self.x_field  = 'timestamp'
         self.y_fields = [{'topic':'joint_states', 'field':'position'},
                          {'topic': 'wrench', 'field':'wrench.force'},
@@ -26,7 +22,6 @@ class DataHandler:
         self.fig_size=(6.5, 3)
         self.fig_dpi=300
         self.tight_layout = False
-        self.success = None
         self.full_files = []
 
 
@@ -110,15 +105,6 @@ class DataHandler:
 
     # DO WORK
     #------------------------------
-
-    # Make a plot for each file in the file list 
-    def plot_all(self):
-        for idx, file in enumerate(self.full_files):
-            print(file)
-            self.new_plot()
-            self.get_data(file)
-            self.plot_current()
-            self.plot_finish(self.save_files[idx])
 
         
     # Get the data from a particular file based on the desired y-fields

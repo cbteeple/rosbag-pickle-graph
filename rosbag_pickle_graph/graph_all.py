@@ -24,8 +24,6 @@ class Grapher:
         self.fig_size=(6.5, 3)
         self.fig_dpi=300
         self.tight_layout = False
-        self.success = None
-        self.full_files = []
         self.dh = DataHandler()
 
     
@@ -66,12 +64,14 @@ class Grapher:
 
     # Plot the current data
     def plot_data(self, curr_data, save_loc=None):
+        self.new_plot()
         success = curr_data.get('success',None)
         # Plot each y-field in a new subplot
         N = len(self.y_fields)
         for idx, y_field in enumerate(self.y_fields):
+            key = self.dh.yfield_to_key(y_field)
             plt.subplot(N, 1, idx+1)
-            plt.plot(self.curr_data[idx]['timestamp'], self.curr_data[idx]['data'], linewidth=0.575)
+            plt.plot(curr_data[key]['timestamp'], curr_data[key]['data'], linewidth=0.575)
             plt.xlabel(self.x_field)
             plt.ylabel(y_field['field'])
 
@@ -102,6 +102,8 @@ class Grapher:
         success = in_stats.get('success',None)
         if (data is None) or (time is None):
             return False
+
+        self.new_plot()
 
         # Get the color palette to use
         if palette is None:

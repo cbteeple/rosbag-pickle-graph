@@ -13,24 +13,14 @@ from .graph_all import Grapher
 from .handle_data import DataHandler
 
 
-save_data_folder = 'Documents/data'
-
 class StatGenerator:
     def __init__(self):
-        self.save_data_folder = save_data_folder
-        self.plt_idx=0
         self.x_field  = 'timestamp'
         self.y_fields = [{'topic':'joint_states', 'field':'position'},
                          {'topic': 'wrench', 'field':'wrench.force'},
                          {'topic': 'wrench', 'field':'wrench.torque'},
                          {'topic':'pressure_control_pressure_data', 'field':'measured'},
                          {'topic':'pressure_control_pressure_data', 'field':'setpoints'}]
-
-        self.fig_size=(6.5, 3)
-        self.fig_dpi=300
-        self.tight_layout = False
-        self.success = None
-        self.full_files = []
 
         self.graph = Grapher()
         self.dh    = DataHandler()
@@ -224,7 +214,7 @@ class StatGenerator:
             files_binned[sorted_comb]['meta']['summary_exists'] = False
             print(full_file)
 
-        self.files_binned = files_binned   
+        self.files_binned = files_binned  
     
 
     # Get data    
@@ -255,26 +245,30 @@ class StatGenerator:
 
         self.allstats=allstats
         return allstats
-            
+    
 
     # Get raw data from a list of files
-    def get_raw_data(self, file_list, out_file):
+    def get_raw_data(self, file_list, out_file, save=True):
         idx = 0
         data_out = {}
         for full_file in file_list: 
             # Get the data and process it
             self.dh.set_filenames(full_file, out_file)            
-            self.dh.get_data(full_file)
-            for key in self.dh.curr_data:
+            curr_data = self.dh.get_data(full_file)
+            for key in curr_data:
                 if data_out.get(key,None) is None:
                     data_out[key] = []
                     
-                data_out[key].append(self.dh.curr_data[key])
+                data_out[key].append(curr_data[key])
 
             # Plot raw data in individual plots
             if self.plot_raw_data:
-                self.graph.set_fig_props(figsize=(6.5,4),tight_layout = False)
-                self.graph.plot_data(self.dh.curr_data, save_loc = out_file)
+                self.graph.set_fig_props(figsize=(6.5,4))
+
+                if save:
+                    self.graph.plot_data(curr_data, save_loc = self.dh.save_files[0])
+                else:
+                    self.graph.plot_data(curr_data)
 
         return data_out
 
@@ -349,7 +343,7 @@ class StatGenerator:
 
 
     # Plot the data
-    def plot(self, allstats = None, save=True):
+    def plot_stats(self, allstats = None, save=True):
         if allstats is None:
             allstats = self.allstats
 
@@ -361,8 +355,23 @@ class StatGenerator:
                 out_file = allstats[key_obj][key_pos]['out_file']
 
                 if self.plot_means:
-                    self.graph.new_plot()
                     if save:
                         self.graph.plot_stats(data, save_loc = out_file )
                     else:
                         self.graph.plot_stats(data)
+
+
+    # Get all the raw data
+    def plot_all_raw_data(self, save=True):
+        for key_obj in self.files_binned:
+            data = {}
+            print('Set: %s'%(key_obj))
+            for key_pos in self.files_binned[key_obj]:
+                if key_pos is 'meta':
+                    continue
+                print('\tPosition: %s'%(key_pos))
+                print('\t\tReading data from %d files'%(len(self.files_binned[key_obj][key_pos]['data_files'])))
+                data_curr  = self.get_raw_data(file_list = self.files_binned[key_obj][key_pos]['data_files'],
+                                               out_file  = self.files_binned[key_obj][key_pos]['out_file'],
+                                               save = save)
+                data[key_pos] = data_curr
