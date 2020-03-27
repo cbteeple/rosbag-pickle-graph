@@ -10,10 +10,7 @@ Graph the data stored by my [rosbag-pickler](https://github.com/cbteeple/rosbag-
 ``` python
 import rosbag_pickle_graph as rpg
 
-robot_graph = rpg.Grapher()
-robot_graph.set_filenames('data', 'output/out_file.pkl')
-robot_graph.plot_all()
-
+# Check out the "tests" folder for examples
 ```
 
 
